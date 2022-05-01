@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: wordpress
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels: 
+      app: wordpress
+  template: 
+    metadata: 
+      labels: 
+        app: wordpress
+    spec: 
+      containers: 
+        - 
+          env: 
+            - 
+              name: wordpress_DB_HOST
+              value: "your_db_endpoint:3306"
+            - 
+              name: wordpress_DB_USER
+              value: your_db_user
+            - 
+              name: wordpress_DB_PASSWORD
+              value: your_db_pass
+            - 
+              name: wordpress_DB_NAME
+              value: your_db_name
+            - 
+              name: wordpress_CONFIG_EXTRA
+              value: "define('FS_METHOD','direct');\n"
+          image: "wordpress:5.3.0"
+          name: wordpress
+          ports: 
+            - 
+              containerPort: 80
+          resources: 
+            limits: 
+              cpu: "2"
+              memory: 2Gi
+            requests: 
+              cpu: 150m
+              memory: 200Mi
+          volumeMounts: 
+            - 
+              mountPath: /var/www/html/wp-content
+              name: wordpress
+      volumes:
+      - name: wordpress
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
